@@ -1,0 +1,25 @@
+// Write your overrides
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap');
+
+body{
+    font-family: 'Alexandria', Courier, monospace;
+}
+
+input{
+    text-align: right !important;
+}
+
+.v-navigation-drawer__content *{
+    font-family: 'Alexandria', Courier, monospace;
+}
+.v-label{
+    font-family: 'Alexandria', Courier, monospace;
+}
+
+.buttons{
+    padding: 12px 0 !important;
+    
+    button{
+        border-radius: 0 !important;
+    }
+}
