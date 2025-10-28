@@ -54,6 +54,8 @@ Route::post('client/activate-confirm', [ConnexController::class, 'activateConfir
 Route::post('client/unsubscribe', [ConnexController::class, 'unsubscribe']);
 Route::post('client/unsubscribe-confirm', [ConnexController::class, 'unsubscribeConfirm']);
 
+Route::post('client/test-subscriber', [ConnexController::class, 'testSubscriber']);
+
 
 
 

@@ -188,4 +188,84 @@ $user = User::updateOrCreate(
 
         return response()->json(['ok' => true, 'data' => $resp]);
     }
+
+    // POST /api/client/test-subscriber  (test endpoint for subscriber details)
+    public function testSubscriber(Request $request)
+    {
+        $validated = $request->validate([
+            'phone'    => ['nullable', 'string'],
+            'skip_db'  => ['nullable', 'boolean'],
+        ]);
+
+        $rawPhone = $validated['phone'] ?? '0920217668';
+        $skipDb   = $validated['skip_db'] ?? false;
+        
+        // Normalize phone number
+        $msisdn = $this->normalizeMsisdn($rawPhone);
+        
+        $result = [
+            'test_info' => [
+                'raw_phone'  => $rawPhone,
+                'normalized' => $msisdn,
+            ]
+        ];
+
+        // Find or create user (only if database operations are not skipped)
+        if (!$skipDb) {
+            try {
+                $user = User::firstOrCreate(
+                    ['phone_number' => $msisdn],
+                    [
+                        'name'     => 'Test User',
+                        'email'    => 'test_' . time() . '@example.com',
+                        'password' => bcrypt('password123'),
+                    ]
+                );
+
+                $result['user'] = [
+                    'id'                => $user->id,
+                    'phone_number'      => $user->phone_number,
+                    'was_newly_created' => $user->wasRecentlyCreated,
+                ];
+            } catch (\Exception $e) {
+                $result['user'] = [
+                    'error'   => 'Database not available',
+                    'message' => $e->getMessage(),
+                ];
+            }
+        } else {
+            $result['user'] = ['skipped' => true];
+        }
+
+        // Call subscriberDetails API
+        try {
+            $apiResponse = $this->connex->subscriberDetails($msisdn);
+            
+            // Extract specific fields
+            $status           = $apiResponse['success']['details']['status'] ?? 'N/A';
+            $expirationDate   = $apiResponse['success']['details']['expiration_date'] ?? 'N/A';
+            $subscriptionName = $apiResponse['success']['details']['subscription_name'] ?? 'N/A';
+            
+            $result['api_response'] = $apiResponse;
+            $result['extracted_data'] = [
+                'status'            => $status,
+                'subscription_name' => $subscriptionName,
+                'expiration_date'   => $expirationDate,
+            ];
+            
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Test completed successfully',
+                'data'    => $result,
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'Failed to fetch subscriber details',
+                'error'   => $e->getMessage(),
+                'data'    => $result,
+            ], 500);
+        }
+    }
 }
