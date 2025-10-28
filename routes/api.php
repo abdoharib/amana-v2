@@ -81,7 +81,7 @@ Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->g
         Route::delete('/{kid}', [KidController::class, 'destroy'])->name('kids.destroy');
     });
     Route::prefix('advice')->group(function () {
-        Route::get('/', [AdviceController::class, 'index'])->name('advice.index');
+        Route::get('/', [AdviceController::class, 'index'])->name('advice.index')->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
         Route::post('/', [AdviceController::class, 'store'])->name('advice.store');
         Route::get('/{advice}', [AdviceController::class, 'show'])->name('advice.show');
         Route::put('/{advice}', [AdviceController::class, 'update'])->name('advice.update');
