@@ -50,21 +50,27 @@ class ConnexSubscribtionCheckMiddleware
             $subscriptionStatus = $subscriberData['success']['details']['status'] ?? null;
             $subscriptionExpiresAt = $subscriberData['success']['details']['expiration_date'] ?? null;
 
-            // Attach subscription info to the request for use in controllers
-          
 
-            // Optional: Block access if not subscribed
-            // Uncomment the following lines if you want to enforce active subscription
-            /*
-            if ($subscriptionStatus !== 'active') {
+            $isExpired = $subscriptionExpiresAt && strtotime($subscriptionExpiresAt) <= strtotime('today');
+            $isCanceled = $subscriptionStatus !== 'active';
+            
+            // Check if subscription status is not active
+            if ($isCanceled && $isExpired) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Active subscription required',
-                    'subscription_status' => $subscriptionStatus,
-                    'subscription_expires_at' => $subscriptionExpiresAt
-                ], 403);
+                    'subscription_status' => $subscriptionStatus
+                ], 401);
+
+            } else if ($isExpired) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Active subscription required',
+                    'subscription_status' => $subscriptionStatus
+                ], 401);
             }
-            */
+
+         
 
         } catch (\Exception $e) {
             return response()->json([

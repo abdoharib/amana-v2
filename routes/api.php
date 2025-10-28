@@ -30,6 +30,7 @@ use App\Http\Controllers\WordGameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnexController;
+use App\Http\Middleware\ConnexSubscribtionCheckMiddleware;
 
 
 // Vistor
@@ -60,7 +61,7 @@ Route::post('client/test-subscriber', [ConnexController::class, 'testSubscriber'
 
 
 // Authentacted User
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->group(function () {
 
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'profile']);
@@ -91,7 +92,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{letter}', [LetterController::class, 'show']);
     });
     Route::prefix('education-stages')->group(function () {
-        Route::get('/', [EducationStageController::class, 'index'])->name('education-stages.index');
+        Route::get('/', [EducationStageController::class, 'index'])
+            ->name('education-stages.index')
+            ->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
     });
     Route::prefix('stories')->group(function () {
         Route::get('/', [StoryController::class, 'index'])->name('stories.index');
@@ -107,7 +110,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', [AdviceImageController::class, 'index']);
     });
     Route::prefix('educational-contents')->group(function () {
-        Route::get('/', [EducationalContentController::class, 'typeIndex'])->name('educational-contents.index');
+        Route::get('/', [EducationalContentController::class, 'typeIndex'])
+            ->name('educational-contents.index')
+            ->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
     });
     Route::prefix('numbers')->group(function () {
         Route::get('/', [NumberController::class, 'index']);
