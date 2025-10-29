@@ -198,6 +198,25 @@
                                 إلغاء الاشتراك
                             </button>
                         </div>
+                    @else
+                        <!-- Subscribe Button (when not active) -->
+                        <div class="mt-8 p-6 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border-2" style="border-color: #ffae00;">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">تفعيل الاشتراك</h3>
+                            <p class="text-gray-600 mb-4">للاستمتاع بجميع مزايا التطبيق، يمكنك تفعيل اشتراكك من خلال النقر على الزر أدناه.</p>
+
+                            <button 
+                                onclick="handleActivateSubscription()"
+                                class="cursor-pointer w-full md:w-auto text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center mx-auto"
+                                style="background: linear-gradient(to right, #ffae00, #f59e0b);"
+                                onmouseover="this.style.background='linear-gradient(to right, #f59e0b, #d97706)'"
+                                onmouseout="this.style.background='linear-gradient(to right, #ffae00, #f59e0b)'"
+                            >
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                تفعيل الاشتراك
+                            </button>
+                        </div>
                     @endif
                 @else
                     <!-- No Subscription Data -->
@@ -212,7 +231,7 @@
         @endif
     </div>
 
-    <!-- Confirmation Modal -->
+    <!-- Confirmation Modal (Unsubscribe) -->
     <div id="confirmModal" class="hidden fixed inset-0 bg-[rgba(0,0,0,0.2)] z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
@@ -228,7 +247,30 @@
                 <button onclick="closeConfirmModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                     إلغاء
                 </button>
-                <button onclick="requestOtp()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
+                <button onclick="requestUnsubscribeOtp()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
+                    متابعة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activation Confirmation Modal -->
+    <div id="activateConfirmModal" class="hidden fixed inset-0 bg-[rgba(0,0,0,0.2)] z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="text-center mb-6">
+                <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">تأكيد التفعيل</h3>
+                <p class="text-gray-600">هل أنت متأكد من رغبتك في تفعيل الاشتراك؟ سيتم إرسال رمز التحقق إلى هاتفك.</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeActivateConfirmModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="requestActivateOtp()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
                     متابعة
                 </button>
             </div>
@@ -261,7 +303,7 @@
                 <button onclick="closeOtpModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                     إلغاء
                 </button>
-                <button onclick="confirmUnsubscribe()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
+                <button id="otpConfirmBtn" onclick="confirmAction()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
                     تأكيد
                 </button>
             </div>
@@ -292,8 +334,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">تم الإلغاء بنجاح</h3>
-                <p class="text-gray-600">تم إلغاء اشتراكك بنجاح</p>
+                <h3 id="successTitle" class="text-2xl font-bold text-gray-800 mb-2">تمت العملية بنجاح</h3>
+                <p id="successMessage" class="text-gray-600">تمت العملية بنجاح</p>
             </div>
         </div>
     </div>
@@ -318,13 +360,26 @@
 
     <script>
         const phoneNumber = '{{ $user->phone_number ?? '' }}';
+        let currentAction = 'unsubscribe'; // 'subscribe' or 'unsubscribe'
 
+        // ==================== Modal Functions ====================
+        
         function handleCancelSubscription() {
+            currentAction = 'unsubscribe';
             document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function handleActivateSubscription() {
+            currentAction = 'subscribe';
+            document.getElementById('activateConfirmModal').classList.remove('hidden');
         }
 
         function closeConfirmModal() {
             document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function closeActivateConfirmModal() {
+            document.getElementById('activateConfirmModal').classList.add('hidden');
         }
 
         function closeOtpModal() {
@@ -339,6 +394,7 @@
         function showLoading(text = 'جاري المعالجة...') {
             document.getElementById('loadingText').textContent = text;
             document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('activateConfirmModal').classList.add('hidden');
             // Don't hide otpModal - loading modal will overlay on top
             document.getElementById('loadingModal').classList.remove('hidden');
         }
@@ -347,15 +403,19 @@
             document.getElementById('loadingModal').classList.add('hidden');
         }
 
-        function showSuccess() {
+        function showSuccess(title, message) {
+            document.getElementById('successTitle').textContent = title || 'تمت العملية بنجاح';
+            document.getElementById('successMessage').textContent = message || 'تمت العملية بنجاح';
             document.getElementById('successModal').classList.remove('hidden');
         }
 
         function showError(message) {
-            document.getElementById('errorMessage').textContent = message || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
+            document.getElementById('errorMessage').textContent = message || 'حدث خطأ. يرجى المحاولة مرة أخرى.';
             document.getElementById('errorModal').classList.remove('hidden');
         }
 
+        // ==================== OTP Input Handling ====================
+        
         function clearOtpInputs() {
             document.getElementById('otp1').value = '';
             document.getElementById('otp2').value = '';
@@ -387,8 +447,10 @@
             return otp1 + otp2 + otp3 + otp4;
         }
 
-        // Step 1: Request OTP
-        async function requestOtp() {
+        // ==================== UNSUBSCRIBE Flow ====================
+        
+        // Step 1: Request OTP for Unsubscribe
+        async function requestUnsubscribeOtp() {
             if (!phoneNumber) {
                 showError('رقم الهاتف غير متوفر');
                 return;
@@ -429,7 +491,7 @@
             }
         }
 
-        // Step 2: Confirm with OTP
+        // Step 2: Confirm Unsubscribe with OTP
         async function confirmUnsubscribe() {
             const otp = getOtpValue();
             
@@ -466,7 +528,8 @@
                 // If success (200 status)
                 if (response.ok) {
                     const data = await response.json();
-                    showSuccess();
+                    closeOtpModal();
+                    showSuccess('تم الإلغاء بنجاح', 'تم إلغاء اشتراكك بنجاح');
                     // Wait 1.5 seconds then reload
                     setTimeout(() => {
                         window.location.reload();
@@ -479,11 +542,123 @@
                     document.getElementById('otp1').focus();
                 }
             } catch (error) {
-                alert('etewtwe')
                 hideLoading();
                 // For network errors, show the error modal
                 showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
                 console.error('Unsubscribe confirm error:', error);
+            }
+        }
+
+        // ==================== SUBSCRIBE/ACTIVATE Flow ====================
+        
+        // Step 1: Request OTP for Activation
+        async function requestActivateOtp() {
+            if (!phoneNumber) {
+                showError('رقم الهاتف غير متوفر');
+                return;
+            }
+
+            showLoading('جاري إرسال رمز التحقق...');
+
+            try {
+                const response = await fetch('/api/client/activate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone: phoneNumber
+                    })
+                });
+
+                hideLoading();
+
+                if (response.ok || response.status === 200) {
+                    // Show OTP modal
+                    document.getElementById('otpModal').classList.remove('hidden');
+                    // Focus first input
+                    setTimeout(() => {
+                        document.getElementById('otp1').focus();
+                    }, 300);
+                } else {
+                    const data = await response.json();
+                    const errorMsg = data.message || data.error || 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.';
+                    showError(errorMsg);
+                }
+            } catch (error) {
+                hideLoading();
+                showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                console.error('Activate OTP request error:', error);
+            }
+        }
+
+        // Step 2: Confirm Activation with OTP
+        async function confirmActivate() {
+            const otp = getOtpValue();
+            
+            // Clear any previous errors
+            document.getElementById('otpError').textContent = '';
+            
+            if (otp.length !== 4) {
+                document.getElementById('otpError').textContent = 'يرجى إدخال رمز مكون من 4 أرقام';
+                return;
+            }
+
+            if (!phoneNumber) {
+                showError('رقم الهاتف غير متوفر');
+                return;
+            }
+
+            showLoading('جاري تفعيل الاشتراك...');
+
+            try {
+                const response = await fetch('/api/client/activate-confirm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone: phoneNumber,
+                        otp: otp
+                    })
+                });
+
+                hideLoading();
+
+                // If success (200 status)
+                if (response.ok) {
+                    const data = await response.json();
+                    closeOtpModal();
+                    showSuccess('تم التفعيل بنجاح', 'تم تفعيل اشتراكك بنجاح');
+                    // Wait 1.5 seconds then reload
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    // If error (500 or any other error status)
+                    // OTP modal is already visible, just show the error
+                    clearOtpInputs();
+                    document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
+                    document.getElementById('otp1').focus();
+                }
+            } catch (error) {
+                hideLoading();
+                // For network errors, show the error modal
+                showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                console.error('Activate confirm error:', error);
+            }
+        }
+
+        // ==================== Generic Confirm Action ====================
+        
+        // This function routes to the correct confirm function based on currentAction
+        function confirmAction() {
+            if (currentAction === 'subscribe') {
+                confirmActivate();
+            } else {
+                confirmUnsubscribe();
             }
         }
     </script>
