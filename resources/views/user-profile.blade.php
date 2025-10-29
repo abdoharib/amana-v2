@@ -495,6 +495,11 @@
 
         function closeEditProfileModal() {
             document.getElementById('editProfileModal').classList.add('hidden');
+            // Reset form to original values
+            document.getElementById('editProfileForm').reset();
+            // Clear any error messages
+            document.getElementById('profileEditErrors').classList.add('hidden');
+            document.getElementById('profileEditErrorsList').innerHTML = '';
         }
 
         function showLoading(text = 'جاري المعالجة...') {
