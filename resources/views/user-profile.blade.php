@@ -211,7 +211,7 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
                 <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #fa496e, #ec4899);">
@@ -220,21 +220,54 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">تأكيد الإلغاء</h3>
-                <p class="text-gray-600">هل أنت متأكد من رغبتك في إلغاء الاشتراك؟</p>
+                <p class="text-gray-600">هل أنت متأكد من رغبتك في إلغاء الاشتراك؟ سيتم إرسال رمز التحقق إلى هاتفك.</p>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeConfirmModal()" class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                     إلغاء
                 </button>
-                <button onclick="confirmUnsubscribe()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
-                    تأكيد الإلغاء
+                <button onclick="requestOtp()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
+                    متابعة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="text-center mb-6">
+                <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">أدخل رمز التحقق</h3>
+                <p class="text-gray-600 mb-4">تم إرسال رمز مكون من 4 أرقام إلى هاتفك</p>
+                
+                <!-- OTP Input -->
+                <div class="flex justify-center gap-2 mb-4" dir="ltr">
+                    <input type="text" maxlength="1" id="otp1" class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" oninput="handleOtpInput(this, 'otp2')" onkeydown="handleOtpBackspace(event, this, null)">
+                    <input type="text" maxlength="1" id="otp2" class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" oninput="handleOtpInput(this, 'otp3')" onkeydown="handleOtpBackspace(event, this, 'otp1')">
+                    <input type="text" maxlength="1" id="otp3" class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" oninput="handleOtpInput(this, 'otp4')" onkeydown="handleOtpBackspace(event, this, 'otp2')">
+                    <input type="text" maxlength="1" id="otp4" class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" oninput="handleOtpInput(this, null)" onkeydown="handleOtpBackspace(event, this, 'otp3')">
+                </div>
+                
+                <p id="otpError" class="text-red-600 text-sm mb-4 hidden">الرمز غير صحيح</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeOtpModal()" class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="confirmUnsubscribe()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
+                    تأكيد
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Loading Modal -->
-    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
             <div class="text-center">
                 <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
@@ -243,13 +276,13 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800">جاري الإلغاء...</h3>
+                <h3 class="text-xl font-bold text-gray-800" id="loadingText">جاري المعالجة...</h3>
             </div>
         </div>
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center">
                 <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -264,7 +297,7 @@
     </div>
 
     <!-- Error Modal -->
-    <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
                 <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
@@ -292,12 +325,19 @@
             document.getElementById('confirmModal').classList.add('hidden');
         }
 
+        function closeOtpModal() {
+            document.getElementById('otpModal').classList.add('hidden');
+            clearOtpInputs();
+        }
+
         function closeErrorModal() {
             document.getElementById('errorModal').classList.add('hidden');
         }
 
-        function showLoading() {
+        function showLoading(text = 'جاري المعالجة...') {
+            document.getElementById('loadingText').textContent = text;
             document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('otpModal').classList.add('hidden');
             document.getElementById('loadingModal').classList.remove('hidden');
         }
 
@@ -314,13 +354,45 @@
             document.getElementById('errorModal').classList.remove('hidden');
         }
 
-        async function confirmUnsubscribe() {
+        function clearOtpInputs() {
+            document.getElementById('otp1').value = '';
+            document.getElementById('otp2').value = '';
+            document.getElementById('otp3').value = '';
+            document.getElementById('otp4').value = '';
+            document.getElementById('otpError').classList.add('hidden');
+        }
+
+        function handleOtpInput(input, nextFieldId) {
+            // Only allow numbers
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            if (input.value && nextFieldId) {
+                document.getElementById(nextFieldId).focus();
+            }
+        }
+
+        function handleOtpBackspace(event, input, prevFieldId) {
+            if (event.key === 'Backspace' && !input.value && prevFieldId) {
+                document.getElementById(prevFieldId).focus();
+            }
+        }
+
+        function getOtpValue() {
+            const otp1 = document.getElementById('otp1').value;
+            const otp2 = document.getElementById('otp2').value;
+            const otp3 = document.getElementById('otp3').value;
+            const otp4 = document.getElementById('otp4').value;
+            return otp1 + otp2 + otp3 + otp4;
+        }
+
+        // Step 1: Request OTP
+        async function requestOtp() {
             if (!phoneNumber) {
                 showError('رقم الهاتف غير متوفر');
                 return;
             }
 
-            showLoading();
+            showLoading('جاري إرسال رمز التحقق...');
 
             try {
                 const response = await fetch('/api/client/unsubscribe', {
@@ -337,20 +409,82 @@
                 hideLoading();
 
                 if (response.ok || response.status === 200) {
-                    showSuccess();
-                    // Wait 1 second then reload
+                    // Show OTP modal
+                    document.getElementById('otpModal').classList.remove('hidden');
+                    // Focus first input
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                        document.getElementById('otp1').focus();
+                    }, 300);
                 } else {
                     const data = await response.json();
-                    const errorMsg = data.message || data.error || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
+                    const errorMsg = data.message || data.error || 'فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.';
                     showError(errorMsg);
                 }
             } catch (error) {
                 hideLoading();
                 showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
-                console.error('Unsubscribe error:', error);
+                console.error('OTP request error:', error);
+            }
+        }
+
+        // Step 2: Confirm with OTP
+        async function confirmUnsubscribe() {
+            const otp = getOtpValue();
+            
+            if (otp.length !== 4) {
+                document.getElementById('otpError').textContent = 'يرجى إدخال رمز مكون من 4 أرقام';
+                document.getElementById('otpError').classList.remove('hidden');
+                return;
+            }
+
+            if (!phoneNumber) {
+                showError('رقم الهاتف غير متوفر');
+                return;
+            }
+
+            showLoading('جاري إلغاء الاشتراك...');
+
+            try {
+                const response = await fetch('/api/client/unsubscribe-confirm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone: phoneNumber,
+                        otp: otp
+                    })
+                });
+
+                hideLoading();
+
+                if (response.ok || response.status === 200) {
+                    showSuccess();
+                    // Wait 1.5 seconds then reload
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    const data = await response.json();
+                    const errorMsg = data.message || data.error || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
+                    
+                    // If OTP is wrong, show error in OTP modal
+                    if (errorMsg.includes('OTP') || errorMsg.includes('رمز') || errorMsg.includes('كود')) {
+                        hideLoading();
+                        document.getElementById('otpModal').classList.remove('hidden');
+                        document.getElementById('otpError').textContent = errorMsg;
+                        document.getElementById('otpError').classList.remove('hidden');
+                        clearOtpInputs();
+                        document.getElementById('otp1').focus();
+                    } else {
+                        showError(errorMsg);
+                    }
+                }
+            } catch (error) {
+                hideLoading();
+                showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                console.error('Unsubscribe confirm error:', error);
             }
         }
     </script>
