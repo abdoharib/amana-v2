@@ -187,7 +187,7 @@
 
                             <button 
                                 onclick="handleCancelSubscription()"
-                                class="w-full md:w-auto text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center mx-auto"
+                                class="cursor-pointer w-full md:w-auto text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center mx-auto"
                                 style="background: linear-gradient(to right, #fa496e, #dc2626);"
                                 onmouseover="this.style.background='linear-gradient(to right, #dc2626, #b91c1c)'"
                                 onmouseout="this.style.background='linear-gradient(to right, #fa496e, #dc2626)'"
@@ -225,10 +225,10 @@
                 <p class="text-gray-600">هل أنت متأكد من رغبتك في إلغاء الاشتراك؟ سيتم إرسال رمز التحقق إلى هاتفك.</p>
             </div>
             <div class="flex gap-3">
-                <button onclick="closeConfirmModal()" class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                <button onclick="closeConfirmModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                     إلغاء
                 </button>
-                <button onclick="requestOtp()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
+                <button onclick="requestOtp()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
                     متابعة
                 </button>
             </div>
@@ -258,10 +258,10 @@
                 <p id="otpError" class="text-red-600 text-sm mb-4 hidden">الرمز غير صحيح</p>
             </div>
             <div class="flex gap-3">
-                <button onclick="closeOtpModal()" class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                <button onclick="closeOtpModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                     إلغاء
                 </button>
-                <button onclick="confirmUnsubscribe()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
+                <button onclick="confirmUnsubscribe()" class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #ffae00, #f59e0b);">
                     تأكيد
                 </button>
             </div>
@@ -310,7 +310,7 @@
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">حدث خطأ</h3>
                 <p id="errorMessage" class="text-gray-600">فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.</p>
             </div>
-            <button onclick="closeErrorModal()" class="w-full px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+            <button onclick="closeErrorModal()" class="cursor-pointer w-full px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
                 إغلاق
             </button>
         </div>
