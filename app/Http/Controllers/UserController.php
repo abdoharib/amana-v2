@@ -48,6 +48,8 @@ class UserController extends Controller
                         ];
                     }
                 } catch (\Exception $e) {
+
+                    dd($e);
                     $subscriptionError = 'تعذر جلب تفاصيل الاشتراك في الوقت الحالي.';
                 }
             }
