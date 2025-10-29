@@ -35,7 +35,6 @@ class UserController extends Controller
                             'status' => $details['status'] ?? 'N/A',
                             'subscription_name' => $details['subscription_name'] ?? 'N/A',
                             'expiration_date' => $details['expiration_date'] ?? 'N/A',
-                            'operator' => $details['operator'] ?? 'N/A',
                         ];
                     }
                 } catch (\Exception $e) {
@@ -91,7 +90,6 @@ class UserController extends Controller
                             'status' => $details['status'] ?? 'N/A',
                             'subscription_name' => $details['subscription_name'] ?? 'N/A',
                             'expiration_date' => $details['expiration_date'] ?? 'N/A',
-                            'operator' => $details['operator'] ?? 'N/A',
                         ];
                     }
                 } catch (\Exception $e) {
