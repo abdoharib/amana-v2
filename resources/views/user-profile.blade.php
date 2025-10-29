@@ -482,7 +482,7 @@
                          localStorage.getItem('auth_token') || 
                          sessionStorage.getItem('auth_token');
             if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
+                headers['Authorization'] = `Bearer ${decodeURIComponent(token)}`;
             }
             
             return headers;
