@@ -67,7 +67,8 @@ Route::post('client/test-subscriber', [ConnexController::class, 'testSubscriber'
 Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->group(function () {
     
     Route::get('/profile-view-test', [UserController::class, 'showProfileTest'])->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
-    Route::get('/profile-view', [UserController::class, 'showProfile'])->middleware('auth:sanctum');
+    Route::get('/profile-view', [UserController::class, 'showProfile'])->withoutMiddleware([ConnexSubscribtionCheckMiddleware::class]);
+ 
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'profile']);
         Route::post('/update', [ProfileController::class, 'update']);

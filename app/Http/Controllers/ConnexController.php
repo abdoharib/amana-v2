@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\services\ConnexApiService;
+use App\Services\ConnexApiService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;

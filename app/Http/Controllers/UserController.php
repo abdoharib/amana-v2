@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\services\ConnexApiService;
+use App\Services\ConnexApiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class UserController extends Controller
 {
-    public function __construct(private ConnexApiService $connex)
+    private ConnexApiService $connex;
+    public function __construct()
     {
+        $this->connex = App::make(ConnexApiService::class);
     }
 
     /**
@@ -18,7 +21,7 @@ class UserController extends Controller
     {
         try {
             $user = $request->user();
-            
+
             // Get or create auth token for the user
             $token = $user->currentAccessToken();
             if (!$token) {
@@ -28,7 +31,7 @@ class UserController extends Controller
                 // Get the plain text token (for existing tokens, we'll use the token from the request)
                 $token = $request->bearerToken();
             }
-            
+
             // Initialize subscription data
             $subscriptionData = null;
             $subscriptionError = null;
@@ -37,7 +40,7 @@ class UserController extends Controller
             if ($user->phone_number) {
                 try {
                     $subscriberResponse = $this->connex->subscriberDetails($user->phone_number);
-                    
+
                     // Extract subscription details
                     if (isset($subscriberResponse['success']['details'])) {
                         $details = $subscriberResponse['success']['details'];
@@ -77,7 +80,7 @@ class UserController extends Controller
         try {
             // Hardcode user with id = 5 for testing
             $user = \App\Models\User::find(5);
-            
+
             if (!$user) {
                 return view('user-profile', [
                     'user' => null,
@@ -85,10 +88,10 @@ class UserController extends Controller
                     'error' => 'المستخدم التجريبي رقم 5 غير موجود في قاعدة البيانات. يرجى إنشاء مستخدم برقم 5 أو تحديث الرقم المحدد.',
                 ]);
             }
-            
+
             // Create a test token for this user
             $token = $user->createToken('test_auth_token')->plainTextToken;
-            
+
             // Initialize subscription data
             $subscriptionData = null;
             $subscriptionError = null;
@@ -97,7 +100,7 @@ class UserController extends Controller
             if ($user->phone_number) {
                 try {
                     $subscriberResponse = $this->connex->subscriberDetails($user->phone_number);
-                    
+
                     // Extract subscription details
                     if (isset($subscriberResponse['success']['details'])) {
                         $details = $subscriberResponse['success']['details'];
