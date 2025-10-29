@@ -19,7 +19,6 @@ class ProfileController extends Controller
     public function update(ProfileRequest $request, UpdateUser $updateUser)
     {
         $guardian = $updateUser->execute(request()->user(), $request);
-        dd('f');
         return response()->json($guardian);
     }
 

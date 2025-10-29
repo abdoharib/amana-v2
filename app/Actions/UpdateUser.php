@@ -11,7 +11,6 @@ class UpdateUser
     }
     public function execute($user, $request)
     {
-        dd('z');
 
         // Delete the old image if a new one is being uploaded
         $request->hasFile('image') && $this->fileHelper->deleteFile($user->image);
@@ -26,7 +25,6 @@ class UpdateUser
         $user->update(array_merge($request->all(), ['image' => $filePath]));
 
         $user->update($request->all());
-        dd('x');
         return $user;
     }
 }
