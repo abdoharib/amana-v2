@@ -339,7 +339,7 @@
         function showLoading(text = 'جاري المعالجة...') {
             document.getElementById('loadingText').textContent = text;
             document.getElementById('confirmModal').classList.add('hidden');
-            document.getElementById('otpModal').classList.add('hidden');
+            // Don't hide otpModal - loading modal will overlay on top
             document.getElementById('loadingModal').classList.remove('hidden');
         }
 
@@ -474,12 +474,10 @@
                     }, 1500);
                 } else {
                     // If error (500 or any other error status)
-                    // Show error inline in OTP modal
-                    document.getElementById('otpModal').classList.remove('hidden');
+                    // OTP modal is already visible, just show the error
+                    // document.getElementById('otpModal').classList.remove('hidden');
                     document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
-                    alert('1')
-                    let otpErrorEle = document.getElementById('otpError').classList.remove('hidden');
-                    alert(JSON.stringify(otpErrorEle))
+                    document.getElementById('otpError').classList.remove('hidden');
                     clearOtpInputs();
                     document.getElementById('otp1').focus();
                 }
