@@ -401,7 +401,7 @@
                 </div>
             </div>
 
-            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)">
+            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)" autocomplete="off">
                 <!-- Name Field -->
                 <div class="mb-4">
                     <label for="editName" class="block text-gray-700 font-semibold mb-2">الاسم</label>
@@ -412,6 +412,7 @@
                         value="{{ $user->name ?? '' }}"
                         required
                         maxlength="255"
+                        autocomplete="off"
                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
                         placeholder="أدخل الاسم"
                     >
@@ -427,6 +428,7 @@
                         value="{{ $user->email ?? '' }}"
                         required
                         maxlength="255"
+                        autocomplete="off"
                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
                         placeholder="أدخل البريد الإلكتروني"
                     >
