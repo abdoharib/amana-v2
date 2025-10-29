@@ -210,14 +210,147 @@
         @endif
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="text-center mb-6">
+                <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #fa496e, #ec4899);">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">تأكيد الإلغاء</h3>
+                <p class="text-gray-600">هل أنت متأكد من رغبتك في إلغاء الاشتراك؟</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="confirmUnsubscribe()" class="flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" style="background: linear-gradient(to right, #fa496e, #dc2626);">
+                    تأكيد الإلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
+                    <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">جاري الإلغاء...</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="text-center">
+                <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">تم الإلغاء بنجاح</h3>
+                <p class="text-gray-600">تم إلغاء اشتراكك بنجاح</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="text-center mb-6">
+                <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">حدث خطأ</h3>
+                <p id="errorMessage" class="text-gray-600">فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.</p>
+            </div>
+            <button onclick="closeErrorModal()" class="w-full px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
+                إغلاق
+            </button>
+        </div>
+    </div>
+
     <script>
+        const phoneNumber = '{{ $user->phone_number ?? '' }}';
+
         function handleCancelSubscription() {
-            if (confirm('هل أنت متأكد من رغبتك في إلغاء الاشتراك؟')) {
-                // You can redirect to the unsubscribe endpoint
-                window.location.href = '/api/client/unsubscribe?phone={{ $user->phone_number ?? '' }}';
-                
-                // Or you can show a message
-                alert('سيتم توجيهك إلى صفحة إلغاء الاشتراك');
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.add('hidden');
+        }
+
+        function showLoading() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('loadingModal').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingModal').classList.add('hidden');
+        }
+
+        function showSuccess() {
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
+            document.getElementById('errorModal').classList.remove('hidden');
+        }
+
+        async function confirmUnsubscribe() {
+            if (!phoneNumber) {
+                showError('رقم الهاتف غير متوفر');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('/api/client/unsubscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone: phoneNumber
+                    })
+                });
+
+                hideLoading();
+
+                if (response.ok || response.status === 200) {
+                    showSuccess();
+                    // Wait 1 second then reload
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    const data = await response.json();
+                    const errorMsg = data.message || data.error || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
+                    showError(errorMsg);
+                }
+            } catch (error) {
+                hideLoading();
+                showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                console.error('Unsubscribe error:', error);
             }
         }
     </script>
