@@ -255,7 +255,7 @@
                     <input type="text" maxlength="1" id="otp4" class="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none" oninput="handleOtpInput(this, null)" onkeydown="handleOtpBackspace(event, this, 'otp3')">
                 </div>
                 
-                <p id="otpError" class="text-red-600 text-sm mb-4 hidden">الرمز غير صحيح</p>
+                <p id="otpError" class="text-red-600 text-sm mb-4 min-h-[1.25rem]"></p>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeOtpModal()" class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors">
@@ -361,7 +361,7 @@
             document.getElementById('otp2').value = '';
             document.getElementById('otp3').value = '';
             document.getElementById('otp4').value = '';
-            document.getElementById('otpError').classList.add('hidden');
+            document.getElementById('otpError').textContent = '';
         }
 
         function handleOtpInput(input, nextFieldId) {
@@ -433,12 +433,11 @@
         async function confirmUnsubscribe() {
             const otp = getOtpValue();
             
-            // Hide any previous errors
-            document.getElementById('otpError').classList.add('hidden');
+            // Clear any previous errors
+            document.getElementById('otpError').textContent = '';
             
             if (otp.length !== 4) {
                 document.getElementById('otpError').textContent = 'يرجى إدخال رمز مكون من 4 أرقام';
-                document.getElementById('otpError').classList.remove('hidden');
                 return;
             }
 
@@ -475,9 +474,7 @@
                 } else {
                     // If error (500 or any other error status)
                     // OTP modal is already visible, just show the error
-                    // document.getElementById('otpModal').classList.remove('hidden');
                     document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
-                    document.getElementById('otpError').classList.remove('hidden');
                     clearOtpInputs();
                     document.getElementById('otp1').focus();
                 }
