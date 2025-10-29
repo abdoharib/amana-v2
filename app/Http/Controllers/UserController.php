@@ -76,7 +76,7 @@ class UserController extends Controller
                     'subscription' => $subscriptionData,
                     'subscriptionError' => $subscriptionError,
                 ])
-                ->cookie('auth_token', $token, 60 * 24 * 7); // 7 days
+                ->cookie('auth_token', $token, 60 * 24 * 7, null, null, true, false); // 7 days, secure=true, httpOnly=false
 
         } catch (\Exception $e) {
             return view('user-profile', [
@@ -137,7 +137,7 @@ class UserController extends Controller
                     'subscriptionError' => $subscriptionError,
                     'isTestMode' => true, // Flag to indicate this is test mode
                 ])
-                ->cookie('auth_token', $token, 60 * 24 * 7); // 7 days
+                ->cookie('auth_token', $token, 60 * 24 * 7, null, null, true, false); // 7 days, secure=true, httpOnly=false
 
         } catch (\Exception $e) {
             return view('user-profile', [
