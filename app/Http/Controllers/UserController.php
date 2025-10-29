@@ -19,6 +19,16 @@ class UserController extends Controller
         try {
             $user = $request->user();
             
+            // Get or create auth token for the user
+            $token = $user->currentAccessToken();
+            if (!$token) {
+                // If no current token, create a new one
+                $token = $user->createToken('auth_token')->plainTextToken;
+            } else {
+                // Get the plain text token (for existing tokens, we'll use the token from the request)
+                $token = $request->bearerToken();
+            }
+            
             // Initialize subscription data
             $subscriptionData = null;
             $subscriptionError = null;
@@ -42,11 +52,13 @@ class UserController extends Controller
                 }
             }
 
-            return view('user-profile', [
-                'user' => $user,
-                'subscription' => $subscriptionData,
-                'subscriptionError' => $subscriptionError,
-            ]);
+            return response()
+                ->view('user-profile', [
+                    'user' => $user,
+                    'subscription' => $subscriptionData,
+                    'subscriptionError' => $subscriptionError,
+                ])
+                ->cookie('authToken', $token, 60 * 24 * 7); // 7 days
 
         } catch (\Exception $e) {
             return view('user-profile', [
@@ -74,6 +86,9 @@ class UserController extends Controller
                 ]);
             }
             
+            // Create a test token for this user
+            $token = $user->createToken('test_auth_token')->plainTextToken;
+            
             // Initialize subscription data
             $subscriptionData = null;
             $subscriptionError = null;
@@ -97,12 +112,14 @@ class UserController extends Controller
                 }
             }
 
-            return view('user-profile', [
-                'user' => $user,
-                'subscription' => $subscriptionData,
-                'subscriptionError' => $subscriptionError,
-                'isTestMode' => true, // Flag to indicate this is test mode
-            ]);
+            return response()
+                ->view('user-profile', [
+                    'user' => $user,
+                    'subscription' => $subscriptionData,
+                    'subscriptionError' => $subscriptionError,
+                    'isTestMode' => true, // Flag to indicate this is test mode
+                ])
+                ->cookie('authToken', $token, 60 * 24 * 7); // 7 days
 
         } catch (\Exception $e) {
             return view('user-profile', [

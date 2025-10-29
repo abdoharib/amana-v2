@@ -459,6 +459,35 @@
         const phoneNumber = '{{ $user->phone_number ?? '' }}';
         let currentAction = 'unsubscribe'; // 'subscribe' or 'unsubscribe'
 
+        // ==================== Helper Functions ====================
+        
+        // Get cookie value by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        
+        // Get authentication headers
+        function getAuthHeaders() {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            };
+            
+            // Check for token in cookies first, then fallback to localStorage or sessionStorage
+            const token = getCookie('authToken') || 
+                         localStorage.getItem('authToken') || 
+                         sessionStorage.getItem('authToken');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            return headers;
+        }
+
         // ==================== Modal Functions ====================
         
         function handleCancelSubscription() {
@@ -574,10 +603,8 @@
             try {
                 const response = await fetch('/api/client/unsubscribe', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
+                    headers: getAuthHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         phone: phoneNumber
                     })
@@ -626,10 +653,8 @@
             try {
                 const response = await fetch('/api/client/unsubscribe-confirm', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
+                    headers: getAuthHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         phone: phoneNumber,
                         otp: otp
@@ -676,10 +701,8 @@
             try {
                 const response = await fetch('/api/client/activate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
+                    headers: getAuthHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         phone: phoneNumber
                     })
@@ -728,10 +751,8 @@
             try {
                 const response = await fetch('/api/client/activate-confirm', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
+                    headers: getAuthHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         phone: phoneNumber,
                         otp: otp
@@ -794,11 +815,7 @@
             try {
                 const response = await fetch('/api/profile/update', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
+                    headers: getAuthHeaders(),
                     credentials: 'same-origin',
                     body: JSON.stringify({
                         name: name,
