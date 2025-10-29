@@ -479,6 +479,7 @@
                     document.getElementById('otp1').focus();
                 }
             } catch (error) {
+                alert('etewtwe')
                 hideLoading();
                 // For network errors, show the error modal
                 showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
