@@ -478,9 +478,9 @@
             };
             
             // Check for token in cookies first, then fallback to localStorage or sessionStorage
-            const token = getCookie('authToken') || 
-                         localStorage.getItem('authToken') || 
-                         sessionStorage.getItem('authToken');
+            const token = getCookie('auth_token') || 
+                         localStorage.getItem('auth_token') || 
+                         sessionStorage.getItem('auth_token');
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
