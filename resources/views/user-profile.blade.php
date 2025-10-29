@@ -670,8 +670,9 @@
                     showSuccess('تم الإلغاء بنجاح', 'تم إلغاء اشتراكك بنجاح');
                     // Wait 1.5 seconds then reload
                     setTimeout(() => {
-                        window.location.reload();
+                        // window.location.reload();
                     }, 1500);
+                    
                 } else {
                     // If error (500 or any other error status)
                     // OTP modal is already visible, just show the error
@@ -768,7 +769,7 @@
                     showSuccess('تم التفعيل بنجاح', 'تم تفعيل اشتراكك بنجاح');
                     // Wait 1.5 seconds then reload
                     setTimeout(() => {
-                        window.location.reload();
+                        // window.location.reload();
                     }, 1500);
                 } else {
                     // If error (500 or any other error status)
@@ -831,7 +832,7 @@
                     showSuccess('تم التحديث بنجاح', 'تم تحديث بياناتك بنجاح');
                     // Wait 1.5 seconds then reload
                     setTimeout(() => {
-                        window.location.reload();
+                        // window.location.reload();
                     }, 1500);
                 } else {
                     // Error response
