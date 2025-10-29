@@ -57,13 +57,27 @@
 
             <!-- User Information Card -->
             <div class="border border-gray-200 bg-white rounded-2xl shadow-xl shadow-gray-75 p-8 mb-6 transform hover:scale-[1.01] transition-transform duration-300">
-                <div class="flex items-center mb-6">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
-                        {{ substr($user->name ?? 'U', 0, 1) }}
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
+                            {{ substr($user->name ?? 'U', 0, 1) }}
+                        </div>
+                        <div class="mr-4">
+                            <h2 class="text-2xl font-bold text-gray-800">معلومات المستخدم</h2>
+                        </div>
                     </div>
-                    <div class="mr-4">
-                        <h2 class="text-2xl font-bold text-gray-800">معلومات المستخدم</h2>
-                    </div>
+                    <button 
+                        onclick="openEditProfileModal()"
+                        class="cursor-pointer text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center"
+                        style="background: linear-gradient(to right, #ffae00, #f59e0b);"
+                        onmouseover="this.style.background='linear-gradient(to right, #f59e0b, #d97706)'"
+                        onmouseout="this.style.background='linear-gradient(to right, #ffae00, #f59e0b)'"
+                    >
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        تعديل
+                    </button>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">
@@ -358,6 +372,87 @@
         </div>
     </div>
 
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="hidden fixed inset-0 bg-[rgba(0,0,0,0.2)] z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 transform transition-all">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mr-4">تعديل الملف الشخصي</h3>
+                </div>
+                <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Error messages container -->
+            <div id="profileEditErrors" class="hidden bg-red-50 border-r-4 border-red-500 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-red-500 ml-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div id="profileEditErrorsList" class="text-red-700 text-sm"></div>
+                </div>
+            </div>
+
+            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)">
+                <!-- Name Field -->
+                <div class="mb-4">
+                    <label for="editName" class="block text-gray-700 font-semibold mb-2">الاسم</label>
+                    <input 
+                        type="text" 
+                        id="editName" 
+                        name="name"
+                        value="{{ $user->name ?? '' }}"
+                        required
+                        maxlength="255"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
+                        placeholder="أدخل الاسم"
+                    >
+                </div>
+
+                <!-- Email Field -->
+                <div class="mb-6">
+                    <label for="editEmail" class="block text-gray-700 font-semibold mb-2">البريد الإلكتروني</label>
+                    <input 
+                        type="email" 
+                        id="editEmail" 
+                        name="email"
+                        value="{{ $user->email ?? '' }}"
+                        required
+                        maxlength="255"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
+                        placeholder="أدخل البريد الإلكتروني"
+                    >
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button 
+                        type="button"
+                        onclick="closeEditProfileModal()" 
+                        class="cursor-pointer flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors"
+                    >
+                        إلغاء
+                    </button>
+                    <button 
+                        type="submit"
+                        class="cursor-pointer flex-1 px-6 py-3 text-white font-bold rounded-lg transition-colors" 
+                        style="background: linear-gradient(to right, #ffae00, #f59e0b);"
+                    >
+                        حفظ التغييرات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const phoneNumber = '{{ $user->phone_number ?? '' }}';
         let currentAction = 'unsubscribe'; // 'subscribe' or 'unsubscribe'
@@ -389,6 +484,17 @@
 
         function closeErrorModal() {
             document.getElementById('errorModal').classList.add('hidden');
+        }
+
+        function openEditProfileModal() {
+            document.getElementById('editProfileModal').classList.remove('hidden');
+            // Clear any previous errors
+            document.getElementById('profileEditErrors').classList.add('hidden');
+            document.getElementById('profileEditErrorsList').innerHTML = '';
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').classList.add('hidden');
         }
 
         function showLoading(text = 'جاري المعالجة...') {
@@ -659,6 +765,80 @@
                 confirmActivate();
             } else {
                 confirmUnsubscribe();
+            }
+        }
+
+        // ==================== Profile Update ====================
+        
+        async function handleProfileUpdate(event) {
+            event.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('editName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            
+            // Clear previous errors
+            document.getElementById('profileEditErrors').classList.add('hidden');
+            document.getElementById('profileEditErrorsList').innerHTML = '';
+            
+            // Show loading
+            showLoading('جاري تحديث البيانات...');
+            
+            try {
+                const response = await fetch('/api/profile/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        name: name,
+                        email: email
+                    })
+                });
+                
+                hideLoading();
+                
+                if (response.ok) {
+                    // Success
+                    closeEditProfileModal();
+                    showSuccess('تم التحديث بنجاح', 'تم تحديث بياناتك بنجاح');
+                    // Wait 1.5 seconds then reload
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    // Error response
+                    const data = await response.json();
+                    
+                    // Check if there are validation errors
+                    if (data.errors) {
+                        // Display validation errors
+                        let errorHtml = '<ul class="list-disc mr-5">';
+                        for (const field in data.errors) {
+                            if (data.errors.hasOwnProperty(field)) {
+                                data.errors[field].forEach(error => {
+                                    errorHtml += `<li>${error}</li>`;
+                                });
+                            }
+                        }
+                        errorHtml += '</ul>';
+                        document.getElementById('profileEditErrorsList').innerHTML = errorHtml;
+                        document.getElementById('profileEditErrors').classList.remove('hidden');
+                    } else {
+                        // Generic error
+                        document.getElementById('profileEditErrorsList').innerHTML = 'حدث خطأ، حاول مرة أخرى';
+                        document.getElementById('profileEditErrors').classList.remove('hidden');
+                    }
+                }
+            } catch (error) {
+                hideLoading();
+                // Network error
+                document.getElementById('profileEditErrorsList').innerHTML = 'حدث خطأ، حاول مرة أخرى';
+                document.getElementById('profileEditErrors').classList.remove('hidden');
+                console.error('Profile update error:', error);
             }
         }
     </script>
