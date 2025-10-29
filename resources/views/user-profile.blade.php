@@ -476,7 +476,7 @@
                     // OTP modal is already visible, just show the error
                     document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
                     clearOtpInputs();
-                    document.getElementById('otp1').focus();
+                    // document.getElementById('otp1').focus();
                 }
             } catch (error) {
                 alert('etewtwe')
