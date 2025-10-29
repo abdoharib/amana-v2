@@ -158,8 +158,10 @@
                             <p class="text-2xl font-bold">
                                 @if(strtolower($subscription['status']) === 'active')
                                     <span class="text-green-600">نشط</span>
+                                @elseif(strtolower($subscription['status']) === 'cancel')
+                                    <span class="text-red-600">تم إلغاء الأشتراك</span>
                                 @else
-                                    <span class="text-red-600">{{ $subscription['status'] }}</span>
+                                    <span class="text-amber-700">{{ $subscription['status'] }}</span>
                                 @endif
                             </p>
                         </div>
@@ -173,7 +175,7 @@
                         <!-- Subscription Name -->
                         <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-4 border-2" style="border-color: #f59e0b;">
                             <p class="text-gray-600 text-sm mb-2">نوع الاشتراك</p>
-                            <p class="text-xl font-bold" style="color: #ffae00;">{{ $subscription['subscription_name'] }}</p>
+                            <p class="text-xl font-bold" style="color: #c58a0a;">{{ $subscription['subscription_name'] }}</p>
                         </div>
                     </div>
 
@@ -182,7 +184,7 @@
                         <div class="mt-8 p-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl border-2" style="border-color: #fa496e;">
                             <h3 class="text-lg font-bold text-gray-800 mb-3">إلغاء الاشتراك</h3>
                             <p class="text-gray-600 mb-4">إذا كنت ترغب في إلغاء اشتراكك، يمكنك القيام بذلك من خلال النقر على الزر أدناه.</p>
-                            
+
                             <button 
                                 onclick="handleCancelSubscription()"
                                 class="w-full md:w-auto text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center mx-auto"
