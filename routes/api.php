@@ -41,11 +41,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/admin/login', [AuthController::class, 'loginAdmin'])->name('admin.login');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/profile-view', [UserController::class, 'showProfile'])->middleware('auth:sanctum');
 });
 
 // Test endpoint (uses hardcoded user id = 5, no authentication required)
-Route::get('auth/profile-view-test', [UserController::class, 'showProfileTest']);
 
 Route::get('client/request-protected-script', [ConnexController::class, 'protectedScript']);
 
@@ -67,7 +65,9 @@ Route::post('client/test-subscriber', [ConnexController::class, 'testSubscriber'
 
 // Authentacted User
 Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->group(function () {
-
+    
+    Route::get('/profile-view-test', [UserController::class, 'showProfileTest'])->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
+    Route::get('/profile-view', [UserController::class, 'showProfile'])->middleware('auth:sanctum');
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'profile']);
         Route::post('/update', [ProfileController::class, 'update']);
@@ -166,7 +166,7 @@ Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->g
         Route::delete('/{vaccination}', [VaccinationController::class, 'destroy'])->name('vaccinations.destroy'); // Delete a specific vaccination
     });
 
-    Route::prefix('user')->group(function () {});
+    Route::prefix('user')->group(function () { });
 
     Route::prefix('admin')->group(function () {
 
