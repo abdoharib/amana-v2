@@ -35,7 +35,7 @@ class ConnexSubscribtionCheckMiddleware
         $user = Auth::user();
 
         // Ensure user has a phone number
-        if (empty($user->phone)) {
+        if (empty($user->phone_number)) {
             return response()->json([
                 'success' => false,
                 'message' => 'User phone number not found'
@@ -44,7 +44,7 @@ class ConnexSubscribtionCheckMiddleware
 
         try {
             // Get subscriber details from Connex API
-            $subscriberData = $this->connexApiService->subscriberDetails($user->phone);
+            $subscriberData = $this->connexApiService->subscriberDetails($user->phone_number);
 
             // Extract subscription status and expiration date based on actual API response structure
             $subscriptionStatus = $subscriberData['success']['details']['status'] ?? null;
