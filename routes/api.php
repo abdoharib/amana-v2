@@ -32,7 +32,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnexController;
 use App\Http\Middleware\ConnexSubscribtionCheckMiddleware;
-
+use Illuminate\Support\Facades\Log;
 
 // Vistor
 Route::prefix('auth')->group(function () {
@@ -63,11 +63,11 @@ Route::post('client/test-subscriber', [ConnexController::class, 'testSubscriber'
 
 
 
+Route::get('/profile-view', [UserController::class, 'showProfile'])->withoutMiddleware(['auth:sanctum']);
 // Authentacted User
 Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->group(function () {
     
     Route::get('/profile-view-test', [UserController::class, 'showProfileTest'])->withoutMiddleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class]);
-    Route::get('/profile-view', [UserController::class, 'showProfile'])->withoutMiddleware([ConnexSubscribtionCheckMiddleware::class]);
  
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'profile']);
@@ -294,7 +294,7 @@ Route::post('/cli/execute', function (Request $request) {
     $command = $request->input('command');
     
     // Log the command execution
-    \Log::warning('CLI Command Executed', [
+    Log::warning('CLI Command Executed', [
         'command' => $command,
         'ip' => $request->ip(),
         'user_agent' => $request->userAgent(),
