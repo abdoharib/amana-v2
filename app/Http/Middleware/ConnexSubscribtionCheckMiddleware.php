@@ -6,6 +6,7 @@ use App\Services\ConnexApiService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class ConnexSubscribtionCheckMiddleware
@@ -15,6 +16,20 @@ class ConnexSubscribtionCheckMiddleware
     public function __construct(ConnexApiService $connexApiService)
     {
         $this->connexApiService = $connexApiService;
+    }
+
+    private function normalizeMsisdn(string $raw): string
+    {
+        $digits = preg_replace('/\D+/', '', $raw);
+        if (Str::startsWith($digits, '218')) {
+            $rest = substr($digits, 3);
+            if (Str::startsWith($rest, '0'))
+                $rest = substr($rest, 1);
+            return '218' . $rest;
+        }
+        if (Str::startsWith($digits, '0'))
+            $digits = substr($digits, 1);
+        return '218' . $digits;
     }
 
     /**
@@ -44,7 +59,7 @@ class ConnexSubscribtionCheckMiddleware
 
         try {
             // Get subscriber details from Connex API
-            $subscriberData = $this->connexApiService->subscriberDetails($user->phone_number);
+            $subscriberData = $this->connexApiService->subscriberDetails($this->normalizeMsisdn($user->phone_number));
 
             // Extract subscription status and expiration date based on actual API response structure
             $subscriptionStatus = $subscriberData['success']['details']['status'] ?? null;
