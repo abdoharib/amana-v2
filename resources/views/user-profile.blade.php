@@ -211,7 +211,7 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black opacity-25 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
                 <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #fa496e, #ec4899);">
@@ -234,7 +234,7 @@
     </div>
 
     <!-- OTP Modal -->
-    <div id="otpModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div id="otpModal" class="hidden fixed inset-0 bg-black opacity-25 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
                 <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
@@ -267,7 +267,7 @@
     </div>
 
     <!-- Loading Modal -->
-    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div id="loadingModal" class="hidden fixed inset-0 bg-black opacity-25 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
             <div class="text-center">
                 <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(to bottom right, #ffae00, #f59e0b);">
@@ -282,7 +282,7 @@
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div id="successModal" class="hidden fixed inset-0 bg-black opacity-25 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center">
                 <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -297,7 +297,7 @@
     </div>
 
     <!-- Error Modal -->
-    <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div id="errorModal" class="hidden fixed inset-0 bg-black opacity-25 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
             <div class="text-center mb-6">
                 <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
