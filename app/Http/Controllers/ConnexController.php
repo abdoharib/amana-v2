@@ -14,7 +14,9 @@ use App\Models\FcmToken;
 
 class ConnexController extends Controller
 {
-    public function __construct(private ConnexApiService $connex) {}
+    public function __construct(private ConnexApiService $connex)
+    {
+    }
 
     /** Consistent phone normalization: 218 + local (no leading 0) */
     private function normalizeMsisdn(string $raw): string
@@ -22,10 +24,12 @@ class ConnexController extends Controller
         $digits = preg_replace('/\D+/', '', $raw);
         if (Str::startsWith($digits, '218')) {
             $rest = substr($digits, 3);
-            if (Str::startsWith($rest, '0')) $rest = substr($rest, 1);
+            if (Str::startsWith($rest, '0'))
+                $rest = substr($rest, 1);
             return '218' . $rest;
         }
-        if (Str::startsWith($digits, '0')) $digits = substr($digits, 1);
+        if (Str::startsWith($digits, '0'))
+            $digits = substr($digits, 1);
         return '218' . $digits;
     }
 
@@ -49,9 +53,9 @@ class ConnexController extends Controller
     public function login(Request $request)
     {
         $validated = $request->validate([
-            'phone'                 => ['required', 'string', 'min:6', 'max:20'],
-            'transaction_identify'  => ['required', 'string'],
-            'otp_signature'         => ['nullable', 'string'],
+            'phone' => ['required', 'string', 'min:6', 'max:20'],
+            'transaction_identify' => ['required', 'string'],
+            'otp_signature' => ['nullable', 'string'],
         ]);
 
         $resp = $this->connex->loginRequest(
@@ -62,7 +66,7 @@ class ConnexController extends Controller
 
         // Optional: anti-fraud code 300 handling
         $messageCode = data_get($resp, 'messageCode') ?? data_get($resp, 'data.messageCode');
-        if ((string)$messageCode === '300') {
+        if ((string) $messageCode === '300') {
             throw ValidationException::withMessages(['phone' => 'Login blocked by fraud checks']);
         }
 
@@ -73,9 +77,9 @@ class ConnexController extends Controller
     public function otpConfirm(Request $request)
     {
         $validated = $request->validate([
-            'phone'      => ['required', 'string'],
-            'otp'        => ['required', 'digits:4'],
-            'fcm_token'  => ['nullable', 'string'], // optional from FE
+            'phone' => ['required', 'string'],
+            'otp' => ['required', 'digits:4'],
+            'fcm_token' => ['nullable', 'string'], // optional from FE
         ]);
 
         $msisdn = $this->normalizeMsisdn($validated['phone']);
@@ -88,14 +92,14 @@ class ConnexController extends Controller
 
         $success = $resp['success'] ?? [];
 
-$user = User::updateOrCreate(
-    ['phone_number' => $msisdn],
-    [
-        'subscription_status'     => $success['status'] ?? null,
-        'subscription_plan'       => $success['operator'] ?? null,
-        'subscription_expires_at' => $success['expiration_date'] ?? null,
-    ]
-);
+        $user = User::updateOrCreate(
+            ['phone_number' => $msisdn],
+            [
+                'subscription_status' => $success['status'] ?? null,
+                'subscription_plan' => $success['operator'] ?? null,
+                'subscription_expires_at' => $success['expiration_date'] ?? null,
+            ]
+        );
 
         // 4) Persist (or add) FCM token
         if (!empty($validated['fcm_token'])) {
@@ -109,10 +113,10 @@ $user = User::updateOrCreate(
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'ok'    => true,
+            'ok' => true,
             'token' => $token,
-            'user'  => $user,
-            'data'  => $resp, // raw provider payload if FE needs it
+            'user' => $user,
+            'data' => $resp, // raw provider payload if FE needs it
         ]);
     }
 
@@ -122,7 +126,7 @@ $user = User::updateOrCreate(
         $request->validate(['phone' => ['required', 'string']]);
 
         $msisdn = $this->normalizeMsisdn($request->query('phone'));
-        $resp   = $this->connex->subscriberDetails($msisdn);
+        $resp = $this->connex->subscriberDetails($msisdn);
 
         // Keep DB snapshot fresh whenever we fetch
         if ($user = User::where('phone_number', $msisdn)->first()) {
@@ -143,7 +147,7 @@ $user = User::updateOrCreate(
         $validated = $request->validate(['phone' => ['required', 'string']]);
 
         $msisdn = $this->normalizeMsisdn($validated['phone']);
-        $resp   = $this->connex->activationRequest($msisdn);
+        $resp = $this->connex->activationRequest($msisdn);
 
         return response()->json(['ok' => true, 'data' => $resp]);
     }
@@ -153,11 +157,11 @@ $user = User::updateOrCreate(
     {
         $validated = $request->validate([
             'phone' => ['required', 'string'],
-            'otp'   => ['required', 'digits:4'],
+            'otp' => ['required', 'digits:4'],
         ]);
 
         $msisdn = $this->normalizeMsisdn($validated['phone']);
-        $resp   = $this->connex->activationConfirm($msisdn, $validated['otp']);
+        $resp = $this->connex->activationConfirm($msisdn, $validated['otp']);
 
         return response()->json(['ok' => true, 'data' => $resp]);
     }
@@ -168,7 +172,7 @@ $user = User::updateOrCreate(
         $validated = $request->validate(['phone' => ['required', 'string']]);
 
         $msisdn = $this->normalizeMsisdn($validated['phone']);
-        $resp   = $this->connex->unsubscribeRequest($msisdn);
+        $resp = $this->connex->unsubscribeRequest($msisdn);
 
         return response()->json(['ok' => true, 'data' => $resp]);
     }
@@ -178,11 +182,11 @@ $user = User::updateOrCreate(
     {
         $validated = $request->validate([
             'phone' => ['required', 'string'],
-            'otp'   => ['required', 'digits:4'],
+            'otp' => ['required', 'digits:4'],
         ]);
 
         $msisdn = $this->normalizeMsisdn($validated['phone']);
-        $resp   = $this->connex->unsubscribeConfirm($msisdn, $validated['otp']);
+        $resp = $this->connex->unsubscribeConfirm($msisdn, $validated['otp']);
 
 
 
@@ -193,19 +197,19 @@ $user = User::updateOrCreate(
     public function testSubscriber(Request $request)
     {
         $validated = $request->validate([
-            'phone'    => ['nullable', 'string'],
-            'skip_db'  => ['nullable', 'boolean'],
+            'phone' => ['nullable', 'string'],
+            'skip_db' => ['nullable', 'boolean'],
         ]);
 
         $rawPhone = $validated['phone'] ?? '0920217668';
-        $skipDb   = $validated['skip_db'] ?? false;
-        
+        $skipDb = $validated['skip_db'] ?? false;
+
         // Normalize phone number
         $msisdn = $this->normalizeMsisdn($rawPhone);
-        
+
         $result = [
             'test_info' => [
-                'raw_phone'  => $rawPhone,
+                'raw_phone' => $rawPhone,
                 'normalized' => $msisdn,
             ]
         ];
@@ -216,20 +220,20 @@ $user = User::updateOrCreate(
                 $user = User::firstOrCreate(
                     ['phone_number' => $msisdn],
                     [
-                        'name'     => 'Test User',
-                        'email'    => 'test_' . time() . '@example.com',
+                        'name' => 'Test User',
+                        'email' => 'test_' . time() . '@example.com',
                         'password' => bcrypt('password123'),
                     ]
                 );
 
                 $result['user'] = [
-                    'id'                => $user->id,
-                    'phone_number'      => $user->phone_number,
+                    'id' => $user->id,
+                    'phone_number' => $user->phone_number,
                     'was_newly_created' => $user->wasRecentlyCreated,
                 ];
             } catch (\Exception $e) {
                 $result['user'] = [
-                    'error'   => 'Database not available',
+                    'error' => 'Database not available',
                     'message' => $e->getMessage(),
                 ];
             }
@@ -240,31 +244,31 @@ $user = User::updateOrCreate(
         // Call subscriberDetails API
         try {
             $apiResponse = $this->connex->subscriberDetails($msisdn);
-            
+
             // Extract specific fields
-            $status           = $apiResponse['success']['details']['status'] ?? 'N/A';
-            $expirationDate   = $apiResponse['success']['details']['expiration_date'] ?? 'N/A';
+            $status = $apiResponse['success']['details']['status'] ?? 'N/A';
+            $expirationDate = $apiResponse['success']['details']['expiration_date'] ?? 'N/A';
             $subscriptionName = $apiResponse['success']['details']['subscription_name'] ?? 'N/A';
-            
+
             $result['api_response'] = $apiResponse;
             $result['extracted_data'] = [
-                'status'            => $status,
+                'status' => $status,
                 'subscription_name' => $subscriptionName,
-                'expiration_date'   => $expirationDate,
+                'expiration_date' => $expirationDate,
             ];
-            
+
             return response()->json([
-                'ok'      => true,
+                'ok' => true,
                 'message' => 'Test completed successfully',
-                'data'    => $result,
+                'data' => $result,
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
-                'ok'      => false,
+                'ok' => false,
                 'message' => 'Failed to fetch subscriber details',
-                'error'   => $e->getMessage(),
-                'data'    => $result,
+                'error' => $e->getMessage(),
+                'data' => $result,
             ], 500);
         }
     }

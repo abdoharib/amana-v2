@@ -27,6 +27,7 @@ use App\Http\Controllers\ProphetStoryDetailController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\VaccinationController;
 use App\Http\Controllers\WordGameController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnexController;
@@ -40,7 +41,11 @@ Route::prefix('auth')->group(function () {
     Route::post('/admin/login', [AuthController::class, 'loginAdmin'])->name('admin.login');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile-view', [UserController::class, 'showProfile'])->middleware('auth:sanctum');
 });
+
+// Test endpoint (uses hardcoded user id = 5, no authentication required)
+Route::get('auth/profile-view-test', [UserController::class, 'showProfileTest']);
 
 Route::get('client/request-protected-script', [ConnexController::class, 'protectedScript']);
 
