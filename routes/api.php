@@ -72,7 +72,7 @@ Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->g
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'profile']);
         Route::post('/update', [ProfileController::class, 'update']);
-        Route::post('/update/phone', [ProfileController::class, 'updatePhone']);
+        // Route::post('/update/phone', [ProfileController::class, 'updatePhone']);
     });
     Route::prefix('word_game')->group(function () {
         Route::get('/', [WordGameController::class, 'index']);
