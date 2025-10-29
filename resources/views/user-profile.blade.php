@@ -477,7 +477,9 @@
                     // Show error inline in OTP modal
                     document.getElementById('otpModal').classList.remove('hidden');
                     document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
-                    document.getElementById('otpError').classList.remove('hidden');
+                    alert('1')
+                    let otpErrorEle = document.getElementById('otpError').classList.remove('hidden');
+                    alert(JSON.stringify(otpErrorEle))
                     clearOtpInputs();
                     document.getElementById('otp1').focus();
                 }
