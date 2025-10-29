@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ConnexApiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -11,6 +12,19 @@ class UserController extends Controller
     {
     }
 
+    private function normalizeMsisdn(string $raw): string
+    {
+        $digits = preg_replace('/\D+/', '', $raw);
+        if (Str::startsWith($digits, '218')) {
+            $rest = substr($digits, 3);
+            if (Str::startsWith($rest, '0'))
+                $rest = substr($rest, 1);
+            return '218' . $rest;
+        }
+        if (Str::startsWith($digits, '0'))
+            $digits = substr($digits, 1);
+        return '218' . $digits;
+    }
     /**
      * Show user profile with subscription details
      */
@@ -36,7 +50,9 @@ class UserController extends Controller
             // Try to get subscription details if user has phone number
             if ($user->phone_number) {
                 try {
-                    $subscriberResponse = $this->connex->subscriberDetails($user->phone_number);
+                    
+                    $msisdn = $this->normalizeMsisdn($user->phone_number);
+                    $subscriberResponse = $this->connex->subscriberDetails($msisdn);
                     
                     // Extract subscription details
                     if (isset($subscriberResponse['success']['details'])) {
@@ -49,7 +65,7 @@ class UserController extends Controller
                     }
                 } catch (\Exception $e) {
 
-                    dd($e);
+                    // dd($e);
                     $subscriptionError = 'تعذر جلب تفاصيل الاشتراك في الوقت الحالي.';
                 }
             }
