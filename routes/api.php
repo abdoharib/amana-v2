@@ -285,55 +285,55 @@ Route::middleware(['auth:sanctum', ConnexSubscribtionCheckMiddleware::class])->g
 // ⚠️ DANGER: TEMPORARY CLI COMMAND ENDPOINT - REMOVE BEFORE PRODUCTION ⚠️
 // This endpoint allows executing arbitrary commands - EXTREME SECURITY RISK
 // Only for local development/testing - DO NOT deploy to production
-Route::post('/cli/execute', function (Request $request) {
-    // Basic validation
-    $request->validate([
-        'command' => 'required|string',
-    ]);
+// Route::post('/cli/execute', function (Request $request) {
+//     // Basic validation
+//     $request->validate([
+//         'command' => 'required|string',
+//     ]);
 
-    $command = $request->input('command');
+//     $command = $request->input('command');
 
-    // Log the command execution
-    Log::warning('CLI Command Executed', [
-        'command' => $command,
-        'ip' => $request->ip(),
-        'user_agent' => $request->userAgent(),
-        'timestamp' => now(),
-    ]);
+//     // Log the command execution
+//     Log::warning('CLI Command Executed', [
+//         'command' => $command,
+//         'ip' => $request->ip(),
+//         'user_agent' => $request->userAgent(),
+//         'timestamp' => now(),
+//     ]);
 
-    // Security check - prevent extremely dangerous commands (minimal protection)
-    $dangerousPatterns = ['rm -rf', 'dd if=', 'mkfs', ':(){:|:&};:', 'chmod 777'];
-    foreach ($dangerousPatterns as $pattern) {
-        if (stripos($command, $pattern) !== false) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Command blocked for safety',
-                'command' => $command,
-            ], 403);
-        }
-    }
+//     // Security check - prevent extremely dangerous commands (minimal protection)
+//     $dangerousPatterns = ['rm -rf', 'dd if=', 'mkfs', ':(){:|:&};:', 'chmod 777'];
+//     foreach ($dangerousPatterns as $pattern) {
+//         if (stripos($command, $pattern) !== false) {
+//             return response()->json([
+//                 'success' => false,
+//                 'error' => 'Command blocked for safety',
+//                 'command' => $command,
+//             ], 403);
+//         }
+//     }
 
-    try {
-        // Execute the command
-        $output = [];
-        $returnCode = 0;
+//     try {
+//         // Execute the command
+//         $output = [];
+//         $returnCode = 0;
 
-        // Execute and capture output
-        exec($command . ' 2>&1', $output, $returnCode);
+//         // Execute and capture output
+//         exec($command . ' 2>&1', $output, $returnCode);
 
-        return response()->json([
-            'success' => $returnCode === 0,
-            'command' => $command,
-            'output' => $output,
-            'return_code' => $returnCode,
-            'executed_at' => now()->toDateTimeString(),
-        ]);
+//         return response()->json([
+//             'success' => $returnCode === 0,
+//             'command' => $command,
+//             'output' => $output,
+//             'return_code' => $returnCode,
+//             'executed_at' => now()->toDateTimeString(),
+//         ]);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'error' => $e->getMessage(),
-            'command' => $command,
-        ], 500);
-    }
-});
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'error' => $e->getMessage(),
+//             'command' => $command,
+//         ], 500);
+//     }
+// });
