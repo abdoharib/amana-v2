@@ -11,7 +11,7 @@ class UserController extends Controller
     private ConnexApiService $connex;
     public function __construct()
     {
-        $this->connex = App::make(ConnexApiService::class);
+        $this->connex = new ConnexApiService();
     }
 
     /**
