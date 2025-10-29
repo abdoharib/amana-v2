@@ -433,6 +433,9 @@
         async function confirmUnsubscribe() {
             const otp = getOtpValue();
             
+            // Hide any previous errors
+            document.getElementById('otpError').classList.add('hidden');
+            
             if (otp.length !== 4) {
                 document.getElementById('otpError').textContent = 'يرجى إدخال رمز مكون من 4 أرقام';
                 document.getElementById('otpError').classList.remove('hidden');
@@ -461,30 +464,26 @@
 
                 hideLoading();
 
-                if (response.ok || response.status === 200) {
+                // If success (200 status)
+                if (response.ok) {
+                    const data = await response.json();
                     showSuccess();
                     // Wait 1.5 seconds then reload
                     setTimeout(() => {
                         window.location.reload();
                     }, 1500);
                 } else {
-                    const data = await response.json();
-                    const errorMsg = data.message || data.error || 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.';
-                    
-                    // If OTP is wrong, show error in OTP modal
-                    if (errorMsg.includes('OTP') || errorMsg.includes('رمز') || errorMsg.includes('كود')) {
-                        hideLoading();
-                        document.getElementById('otpModal').classList.remove('hidden');
-                        document.getElementById('otpError').textContent = errorMsg;
-                        document.getElementById('otpError').classList.remove('hidden');
-                        clearOtpInputs();
-                        document.getElementById('otp1').focus();
-                    } else {
-                        showError(errorMsg);
-                    }
+                    // If error (500 or any other error status)
+                    // Show error inline in OTP modal
+                    document.getElementById('otpModal').classList.remove('hidden');
+                    document.getElementById('otpError').textContent = 'الرمز غير صحيح، يرجى المحاولة مرة أخرى';
+                    document.getElementById('otpError').classList.remove('hidden');
+                    clearOtpInputs();
+                    document.getElementById('otp1').focus();
                 }
             } catch (error) {
                 hideLoading();
+                // For network errors, show the error modal
                 showError('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
                 console.error('Unsubscribe confirm error:', error);
             }
