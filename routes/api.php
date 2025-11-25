@@ -51,6 +51,7 @@ Route::post('client/login', [ConnexController::class, 'login']);
 Route::post('client/otp-confirm', [ConnexController::class, 'otpConfirm']);
 
 Route::get('client/subscriber', [ConnexController::class, 'subscriber']);
+Route::post('client/subscription-status', [ConnexController::class, 'subscriptionStatus']);
 
 Route::post('client/activate', [ConnexController::class, 'activate']);
 Route::post('client/activate-confirm', [ConnexController::class, 'activateConfirm']);

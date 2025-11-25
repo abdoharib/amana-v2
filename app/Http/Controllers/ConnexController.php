@@ -141,6 +141,43 @@ class ConnexController extends Controller
         return response()->json(['ok' => true, 'data' => $resp]);
     }
 
+    // POST /api/client/subscription-status
+    public function subscriptionStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => ['required', 'string', 'min:6', 'max:20'],
+        ]);
+
+        $msisdn = $this->normalizeMsisdn($validated['phone']);
+        $resp = $this->connex->subscriberDetails($msisdn);
+
+        $details = data_get($resp, 'success.details', []);
+        $status = $details['status'] ?? null;
+        $expirationDate = $details['expiration_date'] ?? null;
+
+        // "Expiry date is hit" means the expiration date has been reached (<= today)
+        $expirationReached = $expirationDate
+            ? Carbon::parse($expirationDate)->endOfDay()->lte(now())
+            : false;
+
+        $isActiveAndExpired = ($status === 'active') && $expirationReached;
+
+        // Sync local snapshot when we can
+        if ($user = User::where('phone_number', $msisdn)->first()) {
+            $user->subscription_status = $status;
+            $user->subscription_plan = $details['subscription_name'] ?? null;
+            $user->subscription_expires_at = $expirationDate;
+            $user->save();
+        }
+
+        return response()->json([
+            'ok' => true,
+            'result' => $isActiveAndExpired,
+            'status' => $status,
+            'expiration_date' => $expirationDate,
+        ]);
+    }
+
     // POST /api/client/activate  (request OTP for activation)
     public function activate(Request $request)
     {
